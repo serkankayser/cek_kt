@@ -22,7 +22,7 @@ Flask-OAuth==0.12
 Flask-OAuthlib==0.9.4
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
-httplib2==0.11.3
+httplib2==0.18.0
 idna==2.6
 isort==4.3.21
 itsdangerous==0.24
