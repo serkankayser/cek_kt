@@ -14,7 +14,7 @@ from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50,
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
 from paths import casino_kod, casino_ara, casino_musteri, casino_degistir, casino_hh, casino_tarih, casino_bahis_ara, casino_har_tip, casino_playbet, casino_bosluk, casino_toplam_bahis, casino_kapat
-from paths import istatistikler_bt, para_cekim, tutar
+from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt
 
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[0]) # LOGIN PANELI
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[1]) # CASINO PANELI
@@ -195,10 +195,14 @@ def cekim_onay(note):
         if cek.text == all_customer_ids[-1]:
             cek.click()
             break
-    time.sleep(5)
-
-    # driver_vevo.driver.find_element_by_xpath(gecerli_bt).click # GECERLIYE ATMAK ICIN # YI KALDIR.
-            
+    time.sleep(5) # GECERLININ AKTIF OLMA SURESI
+    
+    driver_vevo.driver.find_element_by_xpath(gecerli_bt).click() 
+    time.sleep(1)
+    yet_notu = driver_vevo.driver.find_element_by_xpath(yetkili_notu)
+    yet_notu.send_keys('.')
+    # driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
+    
     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
     islem_sutunu.clear()
@@ -209,7 +213,6 @@ def cekim_onay(note):
         driver_vevo.driver.find_element_by_xpath(search_bt).click()
         get_cust_id()
     else:
-        
         cp_paste_cust_id()
 
 def cekim_red(note):

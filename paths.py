@@ -32,6 +32,8 @@ istatistikler_bt = '/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/di
 para_cekim = '/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/div/div[1]/div[2]/div/div/div[2]/div[1]/div[2]/table/tbody/tr[3]/td[3]/label'
 tutar = '/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[1]/div[1]/div/div[2]/table/tbody/tr/td[7]'
 gecerli_bt = '/html/body/div[4]/div/form[1]/fieldset/div/div[2]/div[1]/button[2]/span'
+yetkili_notu = '/html/body/div[4]/div/form[4]/div/div[2]/table[1]/tbody/tr[8]/td[3]/textarea'
+evet_bt = '/html/body/div[4]/div/form[4]/div/div[2]/table[3]/tbody/tr/td[1]/button/span'
 
 #---CASINO PANELI-----#
 kod_path = '/html/body/div[1]/form[2]/div/div[2]/table/tbody/tr[1]/td[3]/input'
