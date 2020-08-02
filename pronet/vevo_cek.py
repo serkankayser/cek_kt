@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException
 import time
 import sys
+# sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')
 sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')
 from paths import username_field, pass_field, username, pw, master_islem_tipi, cekim_bt, islem_tipi
 from paths import search_box, btc_sec, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
@@ -57,6 +58,7 @@ def login():
     pass_bt.send_keys(Keys.ENTER)
     time.sleep(10)
     driver_vevo.driver.execute_script("window.open('https://dagur.pronetgaming.eu/restricted/cust-money-dep-withdraw.xhtml')")
+    driver_vevo.driver.execute_script("document.body.style_zoom='50%'")
     time.sleep(3)
     login_casino()
 
@@ -78,6 +80,7 @@ def login_casino():
     get_ready_panel()
 
 def get_ready_panel():
+    driver_vevo.driver.find_element_by_tag_name('html').send_keys(Keys.CONTROL,Keys.SUBTRACT)
     check_exists_by_xpath(master_islem_tipi)
     driver_vevo.driver.find_element_by_xpath(master_islem_tipi).click()
     driver_vevo.driver.find_element_by_xpath(cekim_bt).click()
@@ -122,13 +125,15 @@ def get_cust_id():
     cp_paste_cust_id()
 
 def cp_paste_cust_id():
+    print(all_customer_ids, tum_cek_miktarlari)
     if tum_cek_miktarlari[-1] >= 2000: # KAC TLYE KADAR KT EDILMESINI ISTIYORSAN BURDAN AYARLA (1999 TL ve altindaki miktarlar kt ediliyor)
         del tum_cek_miktarlari[-1]
         del all_customer_ids[-1]
+        cp_paste_cust_id()
     if len(all_customer_ids) == 0:
         time.sleep(10) # YENI CEKIM GELMESINI BEKLE 10 SANIYE
         get_id_again()
-    print(all_customer_ids, tum_cek_miktarlari)    
+    print(all_customer_ids, tum_cek_miktarlari)
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
     time.sleep(1)
     customer_search_box = driver_vevo.driver.find_element_by_xpath(customer_search)
@@ -202,7 +207,7 @@ def cekim_onay():
     time.sleep(1)
     yet_notu = driver_vevo.driver.find_element_by_xpath(yetkili_notu)
     yet_notu.send_keys('.')
-    # driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
+    driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
     
     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
@@ -211,6 +216,7 @@ def cekim_onay():
     cr_page_number = 2
     if len(all_customer_ids) == 0:
         driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
+        time.sleep(1)
         driver_vevo.driver.find_element_by_xpath(search_bt).click()
         get_cust_id()
     else:
@@ -224,6 +230,7 @@ def cekim_red():
     cr_page_number = 2
     if len(all_customer_ids) == 0:
         driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
+        
         driver_vevo.driver.find_element_by_xpath(search_bt).click()
         get_cust_id()
     else:
@@ -266,8 +273,7 @@ def istatistik():
     driver_vevo.driver.execute_script("window.scrollTo(0, 0)")
     driver_vevo.driver.find_element_by_xpath(istatistikler_bt).click()
     time.sleep(4)
-    if not driver_vevo.driver.find_element_by_xpath(para_cekim):
-        istatistik()
+    check_exists_by_xpath(para_cekim)
     para_cekme_miktari = driver_vevo.driver.find_element_by_xpath(para_cekim).text
 
     print(f'Para cekme miktari : {para_cekme_miktari}')
