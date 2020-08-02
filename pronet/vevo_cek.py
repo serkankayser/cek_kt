@@ -7,15 +7,18 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException
 import time
 import sys
-# sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')
-sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')
+
+# sys.path.insert(0, '/home/serkan/cek_kt/')                # SERVER
+# sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
+sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
+
 from paths import username_field, pass_field, username, pw, master_islem_tipi, cekim_bt, islem_tipi
 from paths import search_box, btc_sec, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
 from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50, tum_yatirim_yontemleri, durum_tipi, durum_tamamlandi
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
 from paths import casino_kod, casino_ara, casino_musteri, casino_degistir, casino_hh, casino_tarih, casino_bahis_ara, casino_har_tip, casino_playbet, casino_bosluk, casino_toplam_bahis, casino_kapat
-from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt
+from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga
 
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[0]) # LOGIN PANELI
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[1]) # CASINO PANELI
@@ -31,7 +34,7 @@ tum_cek_miktarlari = []
 
 class vevo_panel():
     chrome_option = Options()
-    # chrome_option.add_argument('--headless')
+    # chrome_option.add_argument('--headless')    # SERVERDAYSAN #YI KALDIR
     chrome_option.add_argument('--no-sandbox')
     chrome_option.add_argument('--disable-dev-shm-usage')
     chrome_option.add_argument("--window-size=1920,1080")
@@ -56,7 +59,16 @@ def login():
     pass_bt.click()
     pass_bt.send_keys(pw)
     pass_bt.send_keys(Keys.ENTER)
+
+    # GOOGLE AUTHENTIFICATION - BASLANGIC
+    ga_box = driver_vevo.driver.find_element_by_xpath(ga)
+    ga_box.click()
+    entry_ga = input("PRONET GA KODU = ")
+    ga_box.send_keys(entry_ga)
+    ga_box.send_keys(Keys.ENTER)
     time.sleep(10)
+    # GOOGLE AUTHENTIFICATION - BITIS
+
     driver_vevo.driver.execute_script("window.open('https://dagur.pronetgaming.eu/restricted/cust-money-dep-withdraw.xhtml')")
     driver_vevo.driver.execute_script("document.body.style_zoom='50%'")
     time.sleep(3)
@@ -75,6 +87,14 @@ def login_casino():
     pass_bt.click()
     pass_bt.send_keys(giris_password)
     pass_bt.send_keys(Keys.ENTER) 
+    # GOOGLE AUTHENTIFICATION - BASLANGIC
+    ga_casino = driver_vevo.driver.find_element_by_xpath(casino_ga)
+    ga_casino.click()
+    ga_kodu = input("CASINO GA KODU = ")
+    ga_casino.send_keys(ga_kodu)
+    ga_casino.send_keys(Keys.ENTER)
+    time.sleep(10)
+    # GOOGLE AUTHENTIFICATION - BITIS
     time.sleep(10)
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
     get_ready_panel()

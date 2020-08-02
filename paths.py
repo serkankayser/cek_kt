@@ -34,6 +34,7 @@ tutar = '/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[1]/div[1]/div
 gecerli_bt = '/html/body/div[4]/div/form[1]/fieldset/div/div[2]/div[1]/button[2]/span'
 yetkili_notu = '/html/body/div[4]/div/form[4]/div/div[2]/table[1]/tbody/tr[8]/td[3]/textarea'
 evet_bt = '/html/body/div[4]/div/form[4]/div/div[2]/table[3]/tbody/tr/td[1]/button/span'
+ga = '/html/body/form/div/div/div/div[1]/div/div[4]/input'
 
 #---CASINO PANELI-----#
 kod_path = '/html/body/div[1]/form[2]/div/div[2]/table/tbody/tr[1]/td[3]/input'
@@ -54,6 +55,7 @@ casino_playbet = '/html/body/div[9]/div/ul/li[2]'
 casino_bosluk = '/html/body/table/tbody/tr[2]/td/fieldset/div/form[4]/div/div[2]/div/div/div/div[3]'
 casino_toplam_bahis = '/html/body/table/tbody/tr[2]/td/fieldset/div/form[4]/div/div[2]/div/div/div/div[3]/div/div[4]/div/table/tfoot/tr/td[4]'
 casino_kapat = '/html/body/table/tbody/tr[2]/td/fieldset/div/form[4]/div/div[1]/a[1]/span'
+casino_ga = '/html/body/div[1]/form[2]/div/div[2]/div/table/tbody/tr/td[3]/input'
 #---CASINO PANELI-----#
 
 tum_yatirim_yontemleri = [
