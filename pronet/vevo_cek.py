@@ -8,9 +8,9 @@ from selenium.common.exceptions import ElementClickInterceptedException, NoSuchE
 import time
 import sys
 
-sys.path.insert(0, '/home/serkan/cek_kt/')                # SERVER
+# sys.path.insert(0, '/home/serkan/cek_kt/')                # SERVER
 # sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
-# sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
+sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
 
 from paths import username_field, pass_field, username, pw, master_islem_tipi, cekim_bt, islem_tipi
 from paths import search_box, btc_sec, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
@@ -34,7 +34,7 @@ tum_cek_miktarlari = []
 
 class vevo_panel():
     chrome_option = Options()
-    chrome_option.add_argument('--headless')    # SERVERDAYSAN #YI KALDIR
+    # chrome_option.add_argument('--headless')    # SERVERDAYSAN #YI KALDIR
     chrome_option.add_argument('--no-sandbox')
     chrome_option.add_argument('--disable-dev-shm-usage')
     chrome_option.add_argument("--window-size=1920,1080")
@@ -219,17 +219,15 @@ def cekim_onay():
         if cek.text == all_customer_ids[-1]:
             cek.click()
             break
-    time.sleep(5) # GECERLININ AKTIF OLMA SURESI
+    time.sleep(6) # GECERLININ AKTIF OLMA SURESI
     # element = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, gecerli_bt)))
     # element.click()
     driver_vevo.driver.find_element_by_xpath(gecerli_bt).click()
-    print('OK')
-    time.sleep(8)
+    time.sleep(1)
     yet_notu = driver_vevo.driver.find_element_by_xpath(yetkili_notu)
-    print(type(yet_notu))
     yet_notu.send_keys('.')
-    print('OK2')
     driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
+    time.sleep(1)
     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
     islem_sutunu.clear()
@@ -455,3 +453,5 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
 
 check_exists_by_xpath(username_field)
 login()
+
+# CEKIM SAYFASINI 50 YAP
