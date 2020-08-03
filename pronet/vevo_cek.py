@@ -45,7 +45,7 @@ driver_vevo = vevo_panel()
 
 def check_exists_by_xpath(xpath):
     try:
-        wait = WebDriverWait(driver_vevo.driver, 20)
+        wait = WebDriverWait(driver_vevo.driver, 10)
         wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
     finally:
         return False
@@ -70,7 +70,6 @@ def login():
     # GOOGLE AUTHENTIFICATION - BITIS
 
     driver_vevo.driver.execute_script("window.open('https://dagur.pronetgaming.eu/restricted/cust-money-dep-withdraw.xhtml')")
-    driver_vevo.driver.execute_script("document.body.style_zoom='50%'")
     time.sleep(3)
     login_casino()
 
@@ -96,7 +95,6 @@ def login_casino():
     ga_casino.send_keys(Keys.ENTER)
     time.sleep(10)
     # GOOGLE AUTHENTIFICATION CASINO - BITIS
-    time.sleep(10)
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
     get_ready_panel()
 
@@ -119,7 +117,7 @@ def get_ready_panel():
     driver_vevo.driver.find_element_by_xpath(bosluk).click()
     driver_vevo.driver.find_element_by_xpath(search_bt).click()
     driver_vevo.driver.execute_script("window.open('https://dagur.pronetgaming.eu/restricted/customer-details.xhtml?faces-redirect=true&customerId=6090455')") 
-    time.sleep(3)
+    time.sleep(2)
     driver_vevo.driver.execute_script("window.open('http://dontpad.com/kerim.cek.kt')")
     get_cust_id()
 
@@ -128,7 +126,7 @@ def get_id_again():
     get_cust_id()
 
 def get_cust_id():
-    time.sleep(3)
+    time.sleep(2)
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
     a = driver_vevo.driver.find_elements_by_xpath(musteri_kodu)
     for customer_id in a:
@@ -140,7 +138,7 @@ def get_cust_id():
         filtred_tutar = int(yeni_tutar[0].replace('.', ''))
         tum_cek_miktarlari.append(filtred_tutar)
     if len(all_customer_ids) == 0:
-        time.sleep(10) # YENI CEKIM GELMESINI BEKLE 10 SANIYE
+        time.sleep(5) # YENI CEKIM GELMESINI BEKLE 5 SANIYE
         get_id_again()
     cp_paste_cust_id()
 
@@ -150,17 +148,16 @@ def cp_paste_cust_id():
         del tum_cek_miktarlari[-1]
         del all_customer_ids[-1]
         cp_paste_cust_id()
-    if len(all_customer_ids) == 0:
-        time.sleep(10) # YENI CEKIM GELMESINI BEKLE 10 SANIYE
-        get_id_again()
-    print(all_customer_ids, tum_cek_miktarlari)
+    if tum_cek_miktarlari[-1] <= 300: # 300 TL ALTI KONTROLSUZ ONAY
+        time.sleep(8)
+        cekim_onay()
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
     time.sleep(1)
     customer_search_box = driver_vevo.driver.find_element_by_xpath(customer_search)
     customer_search_box.click()
-    customer_search_box.send_keys(all_customer_ids[-1]) # DEGISTIR!!!!
+    customer_search_box.send_keys(all_customer_ids[-1])
     driver_vevo.driver.find_element_by_xpath(arama_bt).click()
-    time.sleep(5)
+    time.sleep(4)
     get_ready_islemler()
 
 def get_ready_islemler():
@@ -194,7 +191,7 @@ def get_ready_islemler():
     # WIN_BETI SECME - BITIS
   
     driver_vevo.driver.find_element_by_xpath(ara).click() # ARAMA BUTONUNA TIKLA
-    time.sleep(3)
+    time.sleep(2)
 
     # SAYFA SAYISINI 50 YAP - BASLANGIC
     driver_vevo.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -221,14 +218,20 @@ def cekim_onay():
         if cek.text == all_customer_ids[-1]:
             cek.click()
             break
-    time.sleep(5) # GECERLININ AKTIF OLMA SURESI
-    
-    driver_vevo.driver.find_element_by_xpath(gecerli_bt).click()
-    time.sleep(1)
+    time.sleep(2) # GECERLININ AKTIF OLMA SURESI
+    element = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, gecerli_bt)))
+    element.click()
+    print('OK')
+    # driver_vevo.driver.find_element_by_xpath(gecerli_bt).click()
+    time.sleep(2)
+    if check_exists_by_xpath(yetkili_notu) == 1:
+        print('OK2')
+    else:
+        time.sleep(3)
+        check_exists_by_xpath(yetkili_notu)
     yet_notu = driver_vevo.driver.find_element_by_xpath(yetkili_notu)
     yet_notu.send_keys('.')
     driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
-    
     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
     islem_sutunu.clear()
@@ -257,7 +260,7 @@ def cekim_red():
         cp_paste_cust_id()
 
 def get_wd_data():
-    time.sleep(3)
+    time.sleep(2)
     islem_sutunu = driver_vevo.driver.find_elements_by_xpath(islem)
     
     a = [] # GECICI LISTE ISLEM ICIN
@@ -292,11 +295,10 @@ def istatistik():
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
     driver_vevo.driver.execute_script("window.scrollTo(0, 0)")
     driver_vevo.driver.find_element_by_xpath(istatistikler_bt).click()
-    time.sleep(4)
+    time.sleep(3)
     check_exists_by_xpath(para_cekim)
     para_cekme_miktari = driver_vevo.driver.find_element_by_xpath(para_cekim).text
 
-    print(f'Para cekme miktari : {para_cekme_miktari}')
     if para_cekme_miktari == '0,00':
         return para_cekme_miktari
 
@@ -308,26 +310,31 @@ def casino_hesapla(deposit_miktari):
     kod_yapistir.send_keys(all_customer_ids[-1])
 
     driver_vevo.driver.find_element_by_xpath(casino_ara).click()
-    time.sleep(5)
+    time.sleep(3)
     driver_vevo.driver.find_element_by_xpath(casino_musteri).click()
-    time.sleep(2)
+    time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
-    time.sleep(2)
-    driver_vevo.driver.find_element_by_xpath(casino_hh).click()
-    time.sleep(2)
-    
-    cas_tarih = driver_vevo.driver.find_element_by_xpath(casino_tarih)
-    cas_tarih.click()
-    cas_tarih.clear()
-    cas_tarih.send_keys(tarih_sutunu[-1])
+    # time.sleep(3)
+    element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_hh)))
+    element3.click()
+    # driver_vevo.driver.find_element_by_xpath(casino_hh).click()
+    # time.sleep(2)
+    element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_tarih)))
+    element3.click()
+    element3.clear()
+    element3.send_keys(tarih_sutunu[-1])
+    # cas_tarih = driver_vevo.driver.find_element_by_xpath(casino_tarih)
+    # cas_tarih.click()
+    # cas_tarih.clear()
+    # cas_tarih.send_keys(tarih_sutunu[-1])
     driver_vevo.driver.find_element_by_xpath(casino_bosluk).click()
-    time.sleep(2)
+    time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(casino_har_tip).click()
-    time.sleep(2)
+    time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(casino_playbet).click()
-    time.sleep(2)
+    time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(casino_bahis_ara).click()
-    time.sleep(2)    
+    time.sleep(1)    
 
     bahis_miktari = driver_vevo.driver.find_element_by_xpath(casino_toplam_bahis).text
     filtered_bahis_miktari = bahis_miktari.split('.')
@@ -360,7 +367,6 @@ def casino_hesapla(deposit_miktari):
 def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
     x = int(miktar_sutunu[-1])
     deposit_miktari = x * 7 / 10
-    print(deposit_miktari)
     if islem_sutunu[-1] in tum_yatirim_yontemleri:
         for i in range(len(islem_sutunu)-1, 0, -1):
             if 'Bet' in islem_sutunu[i-1]:
@@ -369,12 +375,12 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 bet_id.location_once_scrolled_into_view
                 time.sleep(1)
                 bet_id.click()
-                time.sleep(2)
+                time.sleep(1)
                 del tarih_sutunu[-1]
                 try:
                     bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
                 except ElementClickInterceptedException:
-                    time.sleep(2)
+                    time.sleep(1)
 
                 for bet_orani in bet_oranlari:
                     a = float(bet_orani.text)
@@ -450,7 +456,7 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 f'/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/div/div[1]/div[9]/div/div/div/div[1]/div[2]/div/div[3]/span/a[{i}]').click()
             cr_page_number += 1
             break
-        time.sleep(2)
+        time.sleep(1)
         get_wd_data()
 
 check_exists_by_xpath(username_field)
