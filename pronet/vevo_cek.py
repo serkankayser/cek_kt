@@ -143,6 +143,8 @@ def get_cust_id():
     cp_paste_cust_id()
 
 def cp_paste_cust_id():
+    if len(tum_cek_miktarlari) == 0:
+        get_id_again()
     print(all_customer_ids, tum_cek_miktarlari)
     if tum_cek_miktarlari[-1] >= 2000: # KAC TLYE KADAR KT EDILMESINI ISTIYORSAN BURDAN AYARLA (1999 TL ve altindaki miktarlar kt ediliyor)
         del tum_cek_miktarlari[-1]
@@ -213,24 +215,20 @@ def dontpade_yazdir(note):
 def cekim_onay():
     time.sleep(2)
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
-
     for cek in driver_vevo.driver.find_elements_by_xpath(musteri_kodu):
         if cek.text == all_customer_ids[-1]:
             cek.click()
             break
-    time.sleep(2) # GECERLININ AKTIF OLMA SURESI
-    element = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, gecerli_bt)))
-    element.click()
+    time.sleep(5) # GECERLININ AKTIF OLMA SURESI
+    # element = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, gecerli_bt)))
+    # element.click()
+    driver_vevo.driver.find_element_by_xpath(gecerli_bt).click()
     print('OK')
-    # driver_vevo.driver.find_element_by_xpath(gecerli_bt).click()
-    time.sleep(2)
-    if check_exists_by_xpath(yetkili_notu) == 1:
-        print('OK2')
-    else:
-        time.sleep(3)
-        check_exists_by_xpath(yetkili_notu)
+    time.sleep(8)
     yet_notu = driver_vevo.driver.find_element_by_xpath(yetkili_notu)
+    print(type(yet_notu))
     yet_notu.send_keys('.')
+    print('OK2')
     driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
@@ -253,7 +251,6 @@ def cekim_red():
     cr_page_number = 2
     if len(all_customer_ids) == 0:
         driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
-        
         driver_vevo.driver.find_element_by_xpath(search_bt).click()
         get_cust_id()
     else:
@@ -269,9 +266,7 @@ def get_wd_data():
         a.append(b.text)
         if 'Withdraw' in a[-1]:
             note = f'{all_customer_ids[-1]} : Son cekiminden once cekimi var. ONAY'
-            dontpade_yazdir(note)
             cekim_onay()
-
         elif b.text in tum_yatirim_yontemleri:
             break
     islem_sutunu = a # ISLEM TIPLERI
@@ -348,6 +343,8 @@ def casino_hesapla(deposit_miktari):
         if a != None:
             note = f'{all_customer_ids[-1]} - Casino cevrimi onay -ILK CEKIM-'
             dontpade_yazdir(note)
+            del all_customer_ids[-1] # LISTEDEKI SON MUSTERI IDSINI SIL
+            del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
             if len(all_customer_ids) == 0:
                 driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
                 driver_vevo.driver.find_element_by_xpath(search_bt).click()
@@ -356,12 +353,11 @@ def casino_hesapla(deposit_miktari):
                 cp_paste_cust_id()
         else:
             note = f'{all_customer_ids[-1]} - Casino cevrimi onay'
-            dontpade_yazdir(note)
             cekim_onay()
     else:
         note = f'{all_customer_ids[-1]} - Casino cevrimi red'
         a = istatistik()
-        dontpade_yazdir(note)    
+        dontpade_yazdir(note)
         cekim_red()
 
 def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
@@ -409,7 +405,6 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                             cp_paste_cust_id()
                     else:
                         note = f'{all_customer_ids[-1]} - Cevrim OK'
-                        dontpade_yazdir(note)
                         cekim_onay()
                     break
                 if i == 1:
@@ -443,7 +438,6 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                         cp_paste_cust_id()
                 else:
                     note = f'{all_customer_ids[-1]} - Klas Poker'
-                    dontpade_yazdir(note)
                     cekim_onay()
 
     elif islem_sutunu[-1] not in tum_yatirim_yontemleri:
