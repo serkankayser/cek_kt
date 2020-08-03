@@ -8,9 +8,9 @@ from selenium.common.exceptions import ElementClickInterceptedException, NoSuchE
 import time
 import sys
 
-# sys.path.insert(0, '/home/serkan/cek_kt/')                # SERVER
+sys.path.insert(0, '/home/serkan/cek_kt/')                # SERVER
 # sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
-sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
+# sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
 
 from paths import username_field, pass_field, username, pw, master_islem_tipi, cekim_bt, islem_tipi
 from paths import search_box, btc_sec, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
@@ -34,7 +34,7 @@ tum_cek_miktarlari = []
 
 class vevo_panel():
     chrome_option = Options()
-    # chrome_option.add_argument('--headless')    # SERVERDAYSAN #YI KALDIR
+    chrome_option.add_argument('--headless')    # SERVERDAYSAN #YI KALDIR
     chrome_option.add_argument('--no-sandbox')
     chrome_option.add_argument('--disable-dev-shm-usage')
     chrome_option.add_argument("--window-size=1920,1080")
@@ -87,20 +87,20 @@ def login_casino():
     pass_bt.click()
     pass_bt.send_keys(giris_password)
     pass_bt.send_keys(Keys.ENTER) 
-    # GOOGLE AUTHENTIFICATION - BASLANGIC
+
+    # GOOGLE AUTHENTIFICATION CASINO - BASLANGIC
     ga_casino = driver_vevo.driver.find_element_by_xpath(casino_ga)
     ga_casino.click()
     ga_kodu = input("CASINO GA KODU = ")
     ga_casino.send_keys(ga_kodu)
     ga_casino.send_keys(Keys.ENTER)
     time.sleep(10)
-    # GOOGLE AUTHENTIFICATION - BITIS
+    # GOOGLE AUTHENTIFICATION CASINO - BITIS
     time.sleep(10)
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
     get_ready_panel()
 
 def get_ready_panel():
-    driver_vevo.driver.find_element_by_tag_name('html').send_keys(Keys.CONTROL,Keys.SUBTRACT)
     check_exists_by_xpath(master_islem_tipi)
     driver_vevo.driver.find_element_by_xpath(master_islem_tipi).click()
     driver_vevo.driver.find_element_by_xpath(cekim_bt).click()
@@ -393,6 +393,8 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                     if a != None:
                         note = f'{all_customer_ids[-1]} - Cevrim OK -ILK CEKIM-'
                         dontpade_yazdir(note)
+                        del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
+                        del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
                         if len(all_customer_ids) == 0:
                             driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
                             driver_vevo.driver.find_element_by_xpath(search_bt).click()
@@ -425,6 +427,8 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 if a != None:
                     note = f'{all_customer_ids[-1]} - Klas Poker -ILK CEKIM-'
                     dontpade_yazdir(note)
+                    del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
+                    del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
                     if len(all_customer_ids) == 0:
                         driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
                         driver_vevo.driver.find_element_by_xpath(search_bt).click()
