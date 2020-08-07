@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException, StaleElementReferenceException
 import time
 import sys
 
@@ -18,7 +18,7 @@ from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50,
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
 from paths import casino_kod, casino_ara, casino_musteri, casino_degistir, casino_hh, casino_tarih, casino_bahis_ara, casino_har_tip, casino_playbet, casino_bosluk, casino_toplam_bahis, casino_kapat
-from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga
+from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga, gecerli_bt2, page_50, page_no
 
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[0]) # LOGIN PANELI
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[1]) # CASINO PANELI
@@ -63,9 +63,9 @@ def login():
     # GOOGLE AUTHENTIFICATION - BASLANGIC
     ga_box = driver_vevo.driver.find_element_by_xpath(ga)
     ga_box.click()
-    entry_ga = input("PRONET GA KODU = ")
-    ga_box.send_keys(entry_ga)
-    ga_box.send_keys(Keys.ENTER)
+    # entry_ga = input("PRONET GA KODU = ")
+    # ga_box.send_keys(entry_ga)
+    # ga_box.send_keys(Keys.ENTER)
     time.sleep(10)
     # GOOGLE AUTHENTIFICATION - BITIS
 
@@ -90,9 +90,9 @@ def login_casino():
     # GOOGLE AUTHENTIFICATION CASINO - BASLANGIC
     ga_casino = driver_vevo.driver.find_element_by_xpath(casino_ga)
     ga_casino.click()
-    ga_kodu = input("CASINO GA KODU = ")
-    ga_casino.send_keys(ga_kodu)
-    ga_casino.send_keys(Keys.ENTER)
+    # ga_kodu = input("CASINO GA KODU = ")
+    # ga_casino.send_keys(ga_kodu)
+    # ga_casino.send_keys(Keys.ENTER)
     time.sleep(10)
     # GOOGLE AUTHENTIFICATION CASINO - BITIS
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
@@ -128,6 +128,15 @@ def get_id_again():
 def get_cust_id():
     time.sleep(2)
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
+
+    # # SAYFA SAYISINI 50 YAP - BASLANGIC
+    # driver_vevo.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    # driver_vevo.driver.find_element_by_xpath(page_no).click()    
+    # time.sleep(1)
+    # driver_vevo.driver.find_element_by_xpath(page_50).click()
+    # time.sleep(1)
+    # # SAYFA SAYISINI 50 YAP - BITIS
+
     a = driver_vevo.driver.find_elements_by_xpath(musteri_kodu)
     for customer_id in a:
         all_customer_ids.append(customer_id.text)
@@ -146,12 +155,11 @@ def cp_paste_cust_id():
     if len(tum_cek_miktarlari) == 0:
         get_id_again()
     print(all_customer_ids, tum_cek_miktarlari)
-    if tum_cek_miktarlari[-1] >= 2000: # KAC TLYE KADAR KT EDILMESINI ISTIYORSAN BURDAN AYARLA (1999 TL ve altindaki miktarlar kt ediliyor)
+    if tum_cek_miktarlari[-1] >= 3000: # KAC TLYE KADAR KT EDILMESINI ISTIYORSAN BURDAN AYARLA (3000 TL ve altindaki miktarlar kt ediliyor)
         del tum_cek_miktarlari[-1]
         del all_customer_ids[-1]
         cp_paste_cust_id()
-    if tum_cek_miktarlari[-1] <= 300: # 300 TL ALTI KONTROLSUZ ONAY
-        time.sleep(8)
+    if tum_cek_miktarlari[-1] <= 500: # 400 TL ALTI KONTROLSUZ ONAY
         cekim_onay()
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
     time.sleep(1)
@@ -159,10 +167,19 @@ def cp_paste_cust_id():
     customer_search_box.click()
     customer_search_box.send_keys(all_customer_ids[-1])
     driver_vevo.driver.find_element_by_xpath(arama_bt).click()
-    time.sleep(4)
     get_ready_islemler()
 
 def get_ready_islemler():
+    time.sleep(5)
+    # while True:
+    #     element = ''
+    #     try:  
+    #         element = driver_vevo.driver.find_element_by_xpath(islemler_bt)
+    #     except StaleElementReferenceException:  
+    #         pass
+    #     if element:
+    #         element.click()
+    #         break
     driver_vevo.driver.find_element_by_xpath(islemler_bt).click() # ISLEMLER BUTONUNA TIKLA
     # TARIHI 1 AY GERIYE AL - BASLANGIC
     check_exists_by_xpath(baslangic_tarihi)
@@ -197,8 +214,8 @@ def get_ready_islemler():
 
     # SAYFA SAYISINI 50 YAP - BASLANGIC
     driver_vevo.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    driver_vevo.driver.find_element_by_xpath(sayfa_nr).click()
     time.sleep(1)
+    driver_vevo.driver.find_element_by_xpath(sayfa_nr).click()
     driver_vevo.driver.find_element_by_xpath(sayfa_50).click()
     # SAYFA SAYISINI 50 YAP - BITIS
     get_wd_data() # SONRAKI FONKSIYONA GEC
@@ -223,10 +240,16 @@ def cekim_onay():
         #     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
         #     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
         #     cp_paste_cust_id()
-    time.sleep(8) # GECERLININ AKTIF OLMA SURESI
-    # element = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, gecerli_bt)))
-    # element.click()
-    driver_vevo.driver.find_element_by_xpath(gecerli_bt).click()
+    while True:
+        time.sleep(1)
+        element = ''
+        try:  
+            element = driver_vevo.driver.find_element_by_xpath(gecerli_bt).get_attribute("aria-disabled")
+        except StaleElementReferenceException:  
+            pass
+        if element == 'false':
+            driver_vevo.driver.find_element_by_xpath(gecerli_bt2).click()
+            break
     time.sleep(1)
     yet_notu = driver_vevo.driver.find_element_by_xpath(yetkili_notu)
     yet_notu.send_keys('.')
@@ -293,9 +316,14 @@ def istatistik():
     driver_vevo.driver.execute_script("window.scrollTo(0, 0)")
     driver_vevo.driver.find_element_by_xpath(istatistikler_bt).click()
     time.sleep(3)
-    check_exists_by_xpath(para_cekim)
-    para_cekme_miktari = driver_vevo.driver.find_element_by_xpath(para_cekim).text
-
+    while True:
+        para_cekme_miktari = ''
+        try:  
+            para_cekme_miktari = driver_vevo.driver.find_element_by_xpath(para_cekim).text
+        except NoSuchElementException:  
+            pass
+        if para_cekme_miktari != '':
+            break
     if para_cekme_miktari == '0,00':
         return para_cekme_miktari
 
@@ -311,10 +339,8 @@ def casino_hesapla(deposit_miktari):
     driver_vevo.driver.find_element_by_xpath(casino_musteri).click()
     time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
-    # time.sleep(3)
-    element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_hh)))
-    element3.click()
-    # driver_vevo.driver.find_element_by_xpath(casino_hh).click()
+    time.sleep(2)
+    driver_vevo.driver.find_element_by_xpath(casino_hh).click()
     # time.sleep(2)
     element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_tarih)))
     element3.click()
@@ -375,10 +401,17 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 bet_id.click()
                 time.sleep(1)
                 del tarih_sutunu[-1]
-                try:
-                    bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
-                except ElementClickInterceptedException:
-                    time.sleep(1)
+                while True:
+                    try:  
+                        bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
+                    except ElementClickInterceptedException:  
+                        pass
+                    if bet_oranlari != '':
+                        break
+                # try:
+                #     bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
+                # except ElementClickInterceptedException:
+                #     time.sleep(1)
 
                 for bet_orani in bet_oranlari:
                     a = float(bet_orani.text)
