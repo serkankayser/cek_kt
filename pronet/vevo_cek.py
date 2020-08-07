@@ -219,7 +219,11 @@ def cekim_onay():
         if cek.text == all_customer_ids[-1]:
             cek.click()
             break
-    time.sleep(6) # GECERLININ AKTIF OLMA SURESI
+        # else:
+        #     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
+        #     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+        #     cp_paste_cust_id()
+    time.sleep(8) # GECERLININ AKTIF OLMA SURESI
     # element = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, gecerli_bt)))
     # element.click()
     driver_vevo.driver.find_element_by_xpath(gecerli_bt).click()
