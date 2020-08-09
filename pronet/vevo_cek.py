@@ -405,17 +405,13 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 time.sleep(1)
                 del tarih_sutunu[-1]
                 while True:
+                    time.sleep(1)
                     try:  
                         bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
-                        print(f'BET ORANLARI TIPI: {type(bet_oranlari)}')
-                    except (ElementClickInterceptedException, NoSuchElementException, StaleElementReferenceException, ElementClickInterceptedException):  
+                    except (ElementClickInterceptedException, NoSuchElementException, StaleElementReferenceException):
                         pass
-                    if bet_oranlari != '' or bet_oranlari != None:
+                    if type(bet_oranlari) is list:
                         break
-                # try:
-                #     bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
-                # except ElementClickInterceptedException:
-                #     time.sleep(1)
 
                 for bet_orani in bet_oranlari:
                     a = float(bet_orani.text)
