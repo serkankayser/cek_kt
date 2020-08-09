@@ -18,7 +18,7 @@ from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50,
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
 from paths import casino_kod, casino_ara, casino_musteri, casino_degistir, casino_hh, casino_tarih, casino_bahis_ara, casino_har_tip, casino_playbet, casino_bosluk, casino_toplam_bahis, casino_kapat
-from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga, gecerli_bt2, page_50, page_no
+from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga, gecerli_bt2, page_50, page_no, bosluk2
 
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[0]) # LOGIN PANELI
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[1]) # CASINO PANELI
@@ -216,7 +216,10 @@ def get_ready_islemler():
     driver_vevo.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(sayfa_nr).click()
+    time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(sayfa_50).click()
+    driver_vevo.driver.find_element_by_xpath(bosluk2).click()
+    time.sleep(1)
     # SAYFA SAYISINI 50 YAP - BITIS
     get_wd_data() # SONRAKI FONKSIYONA GEC
     
@@ -357,7 +360,7 @@ def casino_hesapla(deposit_miktari):
     driver_vevo.driver.find_element_by_xpath(casino_playbet).click()
     time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(casino_bahis_ara).click()
-    time.sleep(1)    
+    time.sleep(2)    
 
     bahis_miktari = driver_vevo.driver.find_element_by_xpath(casino_toplam_bahis).text
     filtered_bahis_miktari = bahis_miktari.split('.')
@@ -404,9 +407,10 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 while True:
                     try:  
                         bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
-                    except ElementClickInterceptedException:  
+                        print(f'BET ORANLARI TIPI: {type(bet_oranlari)}')
+                    except (ElementClickInterceptedException, NoSuchElementException, StaleElementReferenceException, ElementClickInterceptedException):  
                         pass
-                    if bet_oranlari != '':
+                    if bet_oranlari != '' or bet_oranlari != None:
                         break
                 # try:
                 #     bet_oranlari = driver_vevo.driver.find_elements_by_xpath(bet)
