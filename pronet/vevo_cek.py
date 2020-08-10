@@ -18,13 +18,15 @@ from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50,
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
 from paths import casino_kod, casino_ara, casino_musteri, casino_degistir, casino_hh, casino_tarih, casino_bahis_ara, casino_har_tip, casino_playbet, casino_bosluk, casino_toplam_bahis, casino_kapat
-from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga, gecerli_bt2, page_50, page_no, bosluk2
+from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga, gecerli_bt2, page_50, page_no, bosluk2, check_islemler
 
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[0]) # LOGIN PANELI
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[1]) # CASINO PANELI
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[3]) # DONTPAD
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
+limit_rec = 10000
+sys.setrecursionlimit(limit_rec)
 
 all_customer_ids = []
 islem_sutunu = []
@@ -167,20 +169,18 @@ def cp_paste_cust_id():
     customer_search_box.click()
     customer_search_box.send_keys(all_customer_ids[-1])
     driver_vevo.driver.find_element_by_xpath(arama_bt).click()
+    time.sleep(1)
     get_ready_islemler()
 
 def get_ready_islemler():
-    time.sleep(5)
-    # while True:
-    #     element = ''
-    #     try:  
-    #         element = driver_vevo.driver.find_element_by_xpath(islemler_bt)
-    #     except StaleElementReferenceException:  
-    #         pass
-    #     if element:
-    #         element.click()
-    #         break
-    driver_vevo.driver.find_element_by_xpath(islemler_bt).click() # ISLEMLER BUTONUNA TIKLA
+    time.sleep(2)
+    while True:
+        try:  
+            driver_vevo.driver.find_element_by_xpath(islemler_bt).click()
+        except (StaleElementReferenceException, ElementClickInterceptedException, NoSuchElementException):
+            pass
+        if driver_vevo.driver.find_element_by_xpath(check_islemler).get_attribute("aria-selected") == 'true':
+            break
     # TARIHI 1 AY GERIYE AL - BASLANGIC
     check_exists_by_xpath(baslangic_tarihi)
     bt = driver_vevo.driver.find_element_by_xpath(baslangic_tarihi)

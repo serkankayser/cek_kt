@@ -9,7 +9,7 @@ search_box = '//*[@id="transTypes_panel"]/div[1]/div[2]/input'
 btc_sec = '//*[@id="transTypes_panel"]/div[2]/ul/li[4]/div/div[2]/span'
 tum_kutucuklar = '//*[@id="transTypes_panel"]/div[1]/div[1]/div[2]/span'
 bosluk = '//*[@id="customerDepositWithdrawSearchPanel"]'
-bosluk2 = '/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/div/div[1]/div[9]'
+bosluk2 = '/html'
 search_bt = '//*[@id="searchButton"]/span'
 musteri_kodu = '/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[1]/div[1]/div/div[2]/table/tbody/tr/td[14]'
 customer_search = '/html/body/div[4]/div/div[5]/div/form[1]/fieldset/div/table/tbody/tr[1]/td[1]/input'
@@ -39,6 +39,7 @@ evet_bt = '/html/body/div[4]/div/form[4]/div/div[2]/table[3]/tbody/tr/td[1]/butt
 ga = '/html/body/form/div/div/div/div[1]/div/div[4]/input'
 page_no = '/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[1]/div[1]/div/div[3]/select'
 page_50 = '/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[1]/div[1]/div/div[3]/select/option[4]'
+check_islemler = '/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/div/ul/li[9]'
 
 #---CASINO PANELI-----#
 kod_path = '/html/body/div[1]/form[2]/div/div[2]/table/tbody/tr[1]/td[3]/input'
