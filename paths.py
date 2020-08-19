@@ -1,7 +1,7 @@
 username_field = '//*[@id="username"]'
 pass_field = '//*[@id="password"]'
 username = 'kerim-imaj'
-pw = 'Kerim1234!'
+pw = 'Sandalye112$'
 master_islem_tipi = '/html/body/div[4]/div/form[1]/fieldset/div/div[1]/table/tbody/tr[1]/td[2]/div/div[3]/span'
 cekim_bt = '//*[@id="j_idt335_2"]'
 islem_tipi = '/html/body/div[4]/div/form[1]/fieldset/div/div[1]/table/tbody/tr[1]/td[8]/div/div[3]/span'
