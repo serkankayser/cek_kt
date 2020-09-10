@@ -9,8 +9,8 @@ import time
 import sys
 
 # sys.path.insert(0, '/home/serkan/cek_kt/')                # SERVER
-sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
-#sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
+# sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
+sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
 
 from paths import username_field, pass_field, username, pw, master_islem_tipi, cekim_bt, islem_tipi
 from paths import search_box, btc_sec, pp_sec, tutar_sirala, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
@@ -364,17 +364,21 @@ def casino_hesapla(deposit_miktari):
     driver_vevo.driver.find_element_by_xpath(casino_musteri).click()
     while True:
         try:  
-            driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
+            degistir_bt = driver_vevo.driver.find_element_by_xpath(casino_degistir).get_attribute("aria-disabled")
         except (StaleElementReferenceException, ElementClickInterceptedException, NoSuchElementException):
             pass
-        if driver_vevo.driver.find_element_by_xpath(casino_degistir).get_attribute("aria-disabled") == 'false':
+        if degistir_bt == "false":
             driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
             break
     time.sleep(2)
     driver_vevo.driver.find_element_by_xpath(casino_hh).click()
-
-    element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_tarih)))
-    print(element3)
+    while True:
+        try:
+            element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_tarih)))
+        except (StaleElementReferenceException, ElementClickInterceptedException, NoSuchElementException):
+            pass
+        if element3 != False:
+            driver_vevo.driver.refresh()
     element3.click()
     element3.clear()
     element3.send_keys(tarih_sutunu[-1])
