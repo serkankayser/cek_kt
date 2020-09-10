@@ -63,6 +63,7 @@ casino_bosluk = '/html/body/table/tbody/tr[2]/td/fieldset/div/form[4]/div/div[2]
 casino_toplam_bahis = '/html/body/table/tbody/tr[2]/td/fieldset/div/form[4]/div/div[2]/div/div/div/div[3]/div/div[4]/div/table/tfoot/tr/td[4]'
 casino_kapat = '/html/body/table/tbody/tr[2]/td/fieldset/div/form[4]/div/div[1]/a[1]/span'
 casino_ga = '/html/body/div[1]/form[2]/div/div[2]/div/table/tbody/tr/td[3]/input'
+casino_musteri_bilgileri = ''
 #---CASINO PANELI-----#
 
 tum_yatirim_yontemleri = [

@@ -18,7 +18,7 @@ from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50,
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
 from paths import casino_kod, casino_ara, casino_musteri, casino_degistir, casino_hh, casino_tarih, casino_bahis_ara, casino_har_tip, casino_playbet, casino_bosluk, casino_toplam_bahis, casino_kapat
-from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga, gecerli_bt2, page_50, page_no, bosluk2, check_islemler
+from paths import istatistikler_bt, para_cekim, tutar, evet_bt, yetkili_notu, gecerli_bt, ga, casino_ga, gecerli_bt2, page_50, page_no, bosluk2, check_islemler, casino_musteri_bilgileri
 
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[0]) # LOGIN PANELI
 # driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[1]) # CASINO PANELI
@@ -368,7 +368,8 @@ def casino_hesapla(deposit_miktari):
         except (StaleElementReferenceException, ElementClickInterceptedException, NoSuchElementException):
             pass
         if degistir_bt == "false":
-            driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
+            deg = driver_vevo.driver.find_element_by_xpath(casino_degistir)
+            deg.click()
             break
     time.sleep(2)
     driver_vevo.driver.find_element_by_xpath(casino_hh).click()
@@ -378,7 +379,10 @@ def casino_hesapla(deposit_miktari):
         except (StaleElementReferenceException, ElementClickInterceptedException, NoSuchElementException):
             pass
         if element3 != False:
-            driver_vevo.driver.refresh()
+            # driver_vevo.driver.refresh()
+            musteri_bil = driver_vevo.driver.find_element_by_xpath(casino_musteri_bilgileri)
+            musteri_bil.click()
+            driver_vevo.driver.find_element_by_xpath(casino_hh).click()
     element3.click()
     element3.clear()
     element3.send_keys(tarih_sutunu[-1])
