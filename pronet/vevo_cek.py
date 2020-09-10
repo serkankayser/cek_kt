@@ -259,12 +259,12 @@ def cekim_onay():
             cek.location_once_scrolled_into_view
             cek.click()
             break
-        # else:
-        #     all_customer_ids.clear() # LISTEDEKI SON MUSTERININ IDSINI SIL
-        #     tum_cek_miktarlari.clear() # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
-        #     islem_sutunu.clear()
-        #     tarih_sutunu.clear()
-        #     get_cust_id()
+        elif cek.text not in all_customer_ids:
+            all_customer_ids.clear() # LISTEDEKI SON MUSTERININ IDSINI SIL
+            tum_cek_miktarlari.clear() # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+            islem_sutunu.clear()
+            tarih_sutunu.clear()
+            get_cust_id()
     while True:
         time.sleep(1)
         element = ''
@@ -375,14 +375,16 @@ def casino_hesapla(deposit_miktari):
     driver_vevo.driver.find_element_by_xpath(casino_hh).click()
     while True:
         try:
-            element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_tarih)))
+            time.sleep(5)
+            element3 = driver_vevo.driver.find_element_by_xpath(casino_tarih)
+            print(element3.text)
         except (StaleElementReferenceException, ElementClickInterceptedException, NoSuchElementException):
             pass
-        if element3 != False:
-            # driver_vevo.driver.refresh()
+        if element3.text == '':
             musteri_bil = driver_vevo.driver.find_element_by_xpath(casino_musteri_bilgileri)
             musteri_bil.click()
             driver_vevo.driver.find_element_by_xpath(casino_hh).click()
+            break
     element3.click()
     element3.clear()
     element3.send_keys(tarih_sutunu[-1])
