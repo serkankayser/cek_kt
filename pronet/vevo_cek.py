@@ -168,7 +168,7 @@ def get_cust_id():
         filtred_tutar = int(yeni_tutar[0].replace('.', ''))
         tum_cek_miktarlari.append(filtred_tutar)
     if len(all_customer_ids) == 0:
-        time.sleep(5) # YENI CEKIM GELMESINI BEKLE 5 SANIYE
+        time.sleep(15) # YENI CEKIM GELMESINI BEKLE 5 SANIYE
         get_id_again()
     cp_paste_cust_id()
 
@@ -256,12 +256,15 @@ def cekim_onay():
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
     for cek in driver_vevo.driver.find_elements_by_xpath(musteri_kodu):
         if cek.text == all_customer_ids[-1]:
+            cek.location_once_scrolled_into_view
             cek.click()
             break
         # else:
-        #     del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
-        #     del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
-        #     cp_paste_cust_id()
+        #     all_customer_ids.clear() # LISTEDEKI SON MUSTERININ IDSINI SIL
+        #     tum_cek_miktarlari.clear() # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+        #     islem_sutunu.clear()
+        #     tarih_sutunu.clear()
+        #     get_cust_id()
     while True:
         time.sleep(1)
         element = ''
@@ -301,6 +304,7 @@ def cekim_red():
         driver_vevo.driver.find_element_by_xpath(search_bt).click()
         get_cust_id()
     else:
+        driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
         cp_paste_cust_id()
 
 def get_wd_data():
@@ -355,16 +359,22 @@ def casino_hesapla(deposit_miktari):
     kod_yapistir = driver_vevo.driver.find_element_by_xpath(casino_kod)
     kod_yapistir.click()
     kod_yapistir.send_keys(all_customer_ids[-1])
-
     driver_vevo.driver.find_element_by_xpath(casino_ara).click()
     time.sleep(3)
     driver_vevo.driver.find_element_by_xpath(casino_musteri).click()
-    time.sleep(1)
-    driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
+    while True:
+        try:  
+            driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
+        except (StaleElementReferenceException, ElementClickInterceptedException, NoSuchElementException):
+            pass
+        if driver_vevo.driver.find_element_by_xpath(casino_degistir).get_attribute("aria-disabled") == 'false':
+            driver_vevo.driver.find_element_by_xpath(casino_degistir).click()
+            break
     time.sleep(2)
     driver_vevo.driver.find_element_by_xpath(casino_hh).click()
-    # time.sleep(2)
+
     element3 = WebDriverWait(driver_vevo.driver, 20).until(EC.element_to_be_clickable((By.XPATH, casino_tarih)))
+    print(element3)
     element3.click()
     element3.clear()
     element3.send_keys(tarih_sutunu[-1])
@@ -400,6 +410,7 @@ def casino_hesapla(deposit_miktari):
                 driver_vevo.driver.find_element_by_xpath(search_bt).click()
                 get_cust_id()
             else:
+                driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
                 cp_paste_cust_id()
         else:
             note = f'{all_customer_ids[-1]} - Casino cevrimi onay'
@@ -434,15 +445,35 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
 
                 for bet_orani in bet_oranlari:
                     a = float(bet_orani.text)
-                    if a >= 1.30:
-                        deposit_miktari -= int(miktar_sutunu[i-1])
-                        webdriver.ActionChains(driver_vevo.driver).send_keys(Keys.ESCAPE).perform()
-                        time.sleep(1)
-                        break
-                    else:
-                        webdriver.ActionChains(driver_vevo.driver).send_keys(Keys.ESCAPE).perform()
-                        time.sleep(1)
-                        break
+                    if len(bet_oranlari) > 1:
+                        if a >= 1.30:
+                            print(f'1. IFin 1.durumu....a = {a}')
+                            deposit_miktari -= int(miktar_sutunu[i-1])
+                            webdriver.ActionChains(driver_vevo.driver).send_keys(Keys.ESCAPE).perform()
+                            time.sleep(1)
+                            break
+                        elif a == float(bet_oranlari[-1].text):
+                            print(f'1. IFin 2.durumu....a = {a}')
+                            webdriver.ActionChains(driver_vevo.driver).send_keys(Keys.ESCAPE).perform()
+                            time.sleep(1)
+                            break
+                        else:
+                            print(f'1. IFin 3.durumu....a = {a}')
+                            continue
+                    
+                    if len(bet_oranlari) == 1:
+                        if a >= 1.30:
+                            print(f'2. IFin 1.durumu....a = {a}')
+                            deposit_miktari -= int(miktar_sutunu[i-1])
+                            webdriver.ActionChains(driver_vevo.driver).send_keys(Keys.ESCAPE).perform()
+                            time.sleep(1)
+                            break
+
+                        else:
+                            print(f'2. IFin 2.durumu....a = {a}')
+                            webdriver.ActionChains(driver_vevo.driver).send_keys(Keys.ESCAPE).perform()
+                            time.sleep(1)
+                            break
 
                 if deposit_miktari <= 0:
                     a = istatistik()
@@ -493,6 +524,13 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 else:
                     note = f'{all_customer_ids[-1]} - Klas Poker'
                     cekim_onay()
+
+            # elif islem_sutunu[i-1] == False:
+            #     note = f'{all_customer_ids[-1]} - Cevrim RED. Oynamasi gereken tutar: {deposit_miktari}'
+            #     dontpade_yazdir(note)        
+            #     cekim_red()
+            #     break
+
 
     elif islem_sutunu[-1] not in tum_yatirim_yontemleri:
         global cr_page_number
