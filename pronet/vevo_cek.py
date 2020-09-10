@@ -9,11 +9,11 @@ import time
 import sys
 
 # sys.path.insert(0, '/home/serkan/cek_kt/')                # SERVER
-# sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
-sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
+sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
+#sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
 
 from paths import username_field, pass_field, username, pw, master_islem_tipi, cekim_bt, islem_tipi
-from paths import search_box, btc_sec, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
+from paths import search_box, btc_sec, pp_sec, tutar_sirala, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
 from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50, tum_yatirim_yontemleri, durum_tipi, durum_tamamlandi
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
@@ -115,9 +115,28 @@ def get_ready_panel():
     search_b.send_keys('btc')
     driver_vevo.driver.find_element_by_xpath(btc_sec).click()
     time.sleep(1) # SIL
+    #search_b = driver_vevo.driver.find_element_by_xpath(search_box)
+    #search_b.click()
+    #driver_vevo.driver.find_element_by_xpath(search_box).clear()
+    #time.sleep(1)
+    #search_b.click()
+    #search_b.send_keys('Blokesiz Hızlı Papara Withdraw')
+    #driver_vevo.driver.find_element_by_xpath(pp_sec).click()
     # BTC CEKIMI CIKAR - BITIS
     driver_vevo.driver.find_element_by_xpath(bosluk).click()
     driver_vevo.driver.find_element_by_xpath(search_bt).click()
+    time.sleep(2)
+    driver_vevo.driver.find_element_by_xpath(tutar_sirala).click()
+    time.sleep(1)
+    driver_vevo.driver.find_element_by_xpath(tutar_sirala).click()
+    time.sleep(1)
+    driver_vevo.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    driver_vevo.driver.find_element_by_xpath(page_no).click()    
+    time.sleep(1)
+    driver_vevo.driver.find_element_by_xpath(page_50).click()
+    time.sleep(1)
+    #driver_vevo.driver.find_element_by_xpath(tutar_sirala).click()
+    #time.sleep(1)
     driver_vevo.driver.execute_script("window.open('https://dagur.pronetgaming.eu/restricted/customer-details.xhtml?faces-redirect=true&customerId=6090455')") 
     time.sleep(2)
     driver_vevo.driver.execute_script("window.open('http://dontpad.com/kerim.cek.kt')")
@@ -253,7 +272,7 @@ def cekim_onay():
         if element == 'false':
             driver_vevo.driver.find_element_by_xpath(gecerli_bt2).click()
             break
-    time.sleep(1)
+    time.sleep(2)
     yet_notu = driver_vevo.driver.find_element_by_xpath(yetkili_notu)
     yet_notu.send_keys('.')
     driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
