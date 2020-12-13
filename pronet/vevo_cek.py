@@ -13,7 +13,7 @@ sys.path.insert(0, '/Users/saiderdem/Desktop/cek_kt/')    # SAID
 #sys.path.insert(0, '/Users/serkankayser/Desktop/cekimkt/')  # SERKAN
 
 from paths import username_field, pass_field, username, pw, master_islem_tipi, cekim_bt, islem_tipi
-from paths import search_box, btc_sec, pp_sec, jet_sec, tutar_sirala, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
+from paths import search_box, btc_sec, super_sec, pp_sec, jet_sec, tutar_sirala, tum_kutucuklar, bosluk, search_bt, musteri_kodu, customer_search, arama_bt
 from paths import islemler_bt, baslangic_tarihi, ara, islem, sayfa_nr, sayfa_50, tum_yatirim_yontemleri, durum_tipi, durum_tamamlandi
 from paths import islem_type, hepsini_sec, search_box2, win_bet_box, win_bet_box2, bet, text_bosluk
 from paths import password_path, kod_path, username_path, giris_kodu, giris_username, giris_password
@@ -33,6 +33,7 @@ islem_sutunu = []
 tarih_sutunu = []
 cr_page_number = 2
 tum_cek_miktarlari = []
+yat_baslangic_tarihi = []
 
 class vevo_panel():
     chrome_option = Options()
@@ -107,30 +108,31 @@ def get_ready_panel():
     time.sleep(2)
     driver_vevo.driver.find_element_by_xpath(islem_tipi).click()
     time.sleep(2)
-    driver_vevo.driver.find_element_by_xpath(tum_kutucuklar).click() # TUM KUTUCUKLARI SEC - ISLEM TIPINDE
+    #driver_vevo.driver.find_element_by_xpath(tum_kutucuklar).click() # TUM KUTUCUKLARI SEC - ISLEM TIPINDE
+    driver_vevo.driver.find_element_by_xpath(super_sec).click()
     # BTC CEKIMI CIKAR - BASLANGIC
-    search_b = driver_vevo.driver.find_element_by_xpath(search_box)
-    search_b.click()
-    time.sleep(1)
-    search_b.send_keys('btc')
-    driver_vevo.driver.find_element_by_xpath(btc_sec).click()
-    time.sleep(1) # SIL
-    search_b = driver_vevo.driver.find_element_by_xpath(search_box)
-    search_b.click()
-    driver_vevo.driver.find_element_by_xpath(search_box).clear()
-    time.sleep(1)
+    #search_b = driver_vevo.driver.find_element_by_xpath(search_box)
+    #search_b.click()
+    #time.sleep(1)
+    #search_b.send_keys('btc')
+    #driver_vevo.driver.find_element_by_xpath(btc_sec).click()
+    #time.sleep(1) # SIL
+    #search_b = driver_vevo.driver.find_element_by_xpath(search_box)
+    #search_b.click()
+    #driver_vevo.driver.find_element_by_xpath(search_box).clear()
+    #time.sleep(1)
     #search_b.click()
     #search_b.send_keys('Anında Kredi Kartı Withdraw')
     #driver_vevo.driver.find_element_by_xpath(pp_sec).click()
     #time.sleep(1)
-    search_b = driver_vevo.driver.find_element_by_xpath(search_box)
-    search_b.click()
-    driver_vevo.driver.find_element_by_xpath(search_box).clear()
-    time.sleep(1)
-    search_b.click()
-    search_b.send_keys('Jet Papara Withdraw')
-    driver_vevo.driver.find_element_by_xpath(jet_sec).click()
-    time.sleep(1)
+    #search_b = driver_vevo.driver.find_element_by_xpath(search_box)
+    #search_b.click()
+    #driver_vevo.driver.find_element_by_xpath(search_box).clear()
+    #time.sleep(1)
+    #search_b.click()
+    #search_b.send_keys('Jet Papara Withdraw')
+    #driver_vevo.driver.find_element_by_xpath(jet_sec).click()
+    #time.sleep(1)
     # BTC CEKIMI CIKAR - BITIS
     driver_vevo.driver.find_element_by_xpath(bosluk).click()
     driver_vevo.driver.find_element_by_xpath(search_bt).click()
@@ -144,8 +146,8 @@ def get_ready_panel():
     driver_vevo.driver.find_element_by_xpath(page_no).click()    
     time.sleep(1)
     driver_vevo.driver.find_element_by_xpath(page_50).click()
-    #time.sleep(1)
     #driver_vevo.driver.find_element_by_xpath(tutar_sirala).click()
+
     time.sleep(1)
     driver_vevo.driver.execute_script("window.open('https://dagur.pronetgaming.eu/restricted/customer-details.xhtml?faces-redirect=true&customerId=6090455')") 
     time.sleep(2)
@@ -171,15 +173,17 @@ def get_cust_id():
     a = driver_vevo.driver.find_elements_by_xpath(musteri_kodu)
     for customer_id in a:
         all_customer_ids.append(customer_id.text)
-    
+
     b = driver_vevo.driver.find_elements_by_xpath(tutar)
     for tutarlar in b:
         yeni_tutar = tutarlar.text.split(',')
         filtred_tutar = int(yeni_tutar[0].replace('.', ''))
         tum_cek_miktarlari.append(filtred_tutar)
+
     if len(all_customer_ids) == 0:
         time.sleep(15) # YENI CEKIM GELMESINI BEKLE 5 SANIYE
         get_id_again()
+
     cp_paste_cust_id()
 
 def cp_paste_cust_id():
@@ -190,8 +194,36 @@ def cp_paste_cust_id():
         del tum_cek_miktarlari[-1]
         del all_customer_ids[-1]
         cp_paste_cust_id()
-    if tum_cek_miktarlari[-1] <= 0: # 400 TL ALTI KONTROLSUZ ONAY
+    if tum_cek_miktarlari[-1] <= 100: # 400 TL ALTI KONTROLSUZ ONAY
         cekim_onay()
+    
+    for cek in driver_vevo.driver.find_elements_by_xpath(musteri_kodu):
+        if cek.text == all_customer_ids[-1]:
+            cek.location_once_scrolled_into_view
+            cek.click()
+            break
+    
+    while True:
+        element = ''
+        try:  
+            element = driver_vevo.driver.find_element_by_xpath('/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[2]/div[1]/div[6]/div/div[1]/div/div/table/tbody/tr[1]/td[2]/label')
+        except (ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException, StaleElementReferenceException):
+            pass
+        if element:
+            yat_islem_tarihleri_status = driver_vevo.driver.find_elements_by_xpath('/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[2]/div[1]/div[6]/div/div[1]/div/div/table/tbody/tr/td[6]/label')
+            
+            i = 1
+            for status in yat_islem_tarihleri_status:
+                if status.text == 'C':
+                    yat_islem_tarihi = driver_vevo.driver.find_element_by_xpath(f'/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[2]/div[1]/div[6]/div/div[1]/div/div/table/tbody/tr[{i}]/td[2]/label')
+                    print(yat_islem_tarihi.text)
+                    yat_baslangic_tarihi.append(yat_islem_tarihi.text)
+                    break
+                else:
+                    i += 1
+        if yat_baslangic_tarihi:
+            break
+
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
     time.sleep(1)
     customer_search_box = driver_vevo.driver.find_element_by_xpath(customer_search)
@@ -213,13 +245,15 @@ def get_ready_islemler():
     # TARIHI 1 AY GERIYE AL - BASLANGIC
     check_exists_by_xpath(baslangic_tarihi)
     bt = driver_vevo.driver.find_element_by_xpath(baslangic_tarihi)
-    tarih = bt.get_attribute('value') # TARIH DEGERINI AL
-    gun = tarih[0:2]
-    ay = tarih[3:5]
-    sene = tarih[6:10]
-    yeni_ay = int(ay) - 1
+
+    # tarih = bt.get_attribute('value') # TARIH DEGERINI AL
+    # gun = tarih[0:2]
+    # ay = tarih[3:5]
+    # sene = tarih[6:10]
+    # yeni_ay = int(ay) - 1
     bt.clear()
-    bt.send_keys(f'{gun}.{yeni_ay}.{sene} 23:59:59')
+    bt.send_keys(yat_baslangic_tarihi[0])
+    del yat_baslangic_tarihi[0]
     # TARIHI 1 AY GERIYE AL - BITIS
 
     # DURUM TIPINI TAMAMLANMIS YAP - BASLANGIC
@@ -228,13 +262,13 @@ def get_ready_islemler():
     # DURUM TIPINI TAMAMLANMIS YAP - BITIS
 
     # WIN_BETI SECME - BASLANGIC
-    driver_vevo.driver.find_element_by_xpath(islem_type).click()
-    driver_vevo.driver.find_element_by_xpath(hepsini_sec).click()
-    win_yazdir = driver_vevo.driver.find_element_by_xpath(search_box2)
-    win_yazdir.click()
-    win_yazdir.send_keys('win')
-    driver_vevo.driver.find_element_by_xpath(win_bet_box).click()
-    driver_vevo.driver.find_element_by_xpath(win_bet_box2).click()
+    #driver_vevo.driver.find_element_by_xpath(islem_type).click()
+    #driver_vevo.driver.find_element_by_xpath(hepsini_sec).click()
+    #win_yazdir = driver_vevo.driver.find_element_by_xpath(search_box2)
+    #win_yazdir.click()
+    #win_yazdir.send_keys('win')
+    #driver_vevo.driver.find_element_by_xpath(win_bet_box).click()
+    #driver_vevo.driver.find_element_by_xpath(win_bet_box2).click()
     time.sleep(1)
     # WIN_BETI SECME - BITIS
   
@@ -446,7 +480,7 @@ def casino_hesapla(deposit_miktari):
 
 def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
     x = int(miktar_sutunu[-1])
-    deposit_miktari = x * 10 / 10
+    deposit_miktari = x * 9 / 10
     if islem_sutunu[-1] in tum_yatirim_yontemleri:
         for i in range(len(islem_sutunu)-1, 0, -1):
             if 'Bet' in islem_sutunu[i-1]:
@@ -455,7 +489,7 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                 bet_id.location_once_scrolled_into_view
                 time.sleep(1)
                 bet_id.click()
-                time.sleep(1)
+                time.sleep(2)
                 del tarih_sutunu[-1]
                 while True:
                     time.sleep(1)

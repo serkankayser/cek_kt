@@ -6,7 +6,8 @@ master_islem_tipi = '/html/body/div[4]/div/form[1]/fieldset/div/div[1]/table/tbo
 cekim_bt = '/html/body/div[16]/div/ul/li[3]'
 islem_tipi = '/html/body/div[4]/div/form[1]/fieldset/div/div[1]/table/tbody/tr[1]/td[8]/div/div[3]/span'
 search_box = '//*[@id="transTypes_panel"]/div[1]/div[2]/input'
-btc_sec = '//*[@id="transTypes_panel"]/div[2]/ul/li[3]/div/div[2]/span'
+btc_sec = '/html/body/div[21]/div[2]/ul/li[4]/div/div[2]'
+super_sec = '/html/body/div[21]/div[2]/ul/li[6]/div/div[2]/span'
 jet_sec = '//*[@id="transTypes_panel"]/div[2]/ul/li[5]/div/div[2]/span'
 pp_sec = '/html/body/div[21]/div[2]/ul/li[7]/div/div[2]/span'
 tutar_sirala = '/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[1]/div[1]/div/div[2]/table/thead/tr/th[7]'
@@ -29,8 +30,8 @@ durum_tamamlandi = '/html/body/div[27]/div/ul/li[5]'
 islem_type = '/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/div/div[1]/div[9]/div/div/div/div[1]/div[1]/table/tbody/tr[1]/td[6]/div/span/label'
 hepsini_sec = '/html/body/div[24]/div[1]/div[1]/div[2]/span'
 search_box2 = '/html/body/div[24]/div[1]/div[2]/input'
-win_bet_box = '/html/body/div[24]/div[2]/ul/li[62]/div/div[2]/span'
-win_bet_box2 = '/html/body/div[24]/div[2]/ul/li[66]/div/div[2]/span'
+win_bet_box = '/html/body/div[24]/div[2]/ul/li[58]/div/div[2]/span'
+win_bet_box2 = '/html/body/div[24]/div[2]/ul/li[59]/div/div[2]/span'
 bet = '/html/body/div[2]/div[2]/form/div/div[3]/div/div[2]/table/tbody/tr/td[10]'
 text_bosluk = '/html/body/div[3]/textarea'
 istatistikler_bt = '/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/div/ul/li[2]/a'
@@ -91,4 +92,8 @@ tum_yatirim_yontemleri = [
     'Superhavale Deposit',
     'Papara (Manuel)',
     'Maldopay Card Deposit',
+    'Ödendibil QR Deposit',
+    'Kredi Kartı (Manuel) Deposit',
+    'Hemenode deposit',
+    'Maksipara Havale Deposit',
     ]
