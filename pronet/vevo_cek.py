@@ -31,7 +31,7 @@ sys.setrecursionlimit(limit_rec)
 all_customer_ids = []
 islem_sutunu = []
 tarih_sutunu = []
-cr_page_number = 2
+global cr_page_number
 tum_cek_miktarlari = []
 yat_baslangic_tarihi = []
 
@@ -181,31 +181,38 @@ def get_cust_id():
         tum_cek_miktarlari.append(filtred_tutar)
 
     if len(all_customer_ids) == 0:
-        time.sleep(15) # YENI CEKIM GELMESINI BEKLE 5 SANIYE
+        time.sleep(15) # YENI CEKIM GELMESINI BEKLE 15 SANIYE
         get_id_again()
 
-    cp_paste_cust_id()
-
-def cp_paste_cust_id():
-    if len(tum_cek_miktarlari) == 0:
-        get_id_again()
-    print(all_customer_ids, tum_cek_miktarlari)
-    if tum_cek_miktarlari[-1] >= 2999: # KAC TLYE KADAR KT EDILMESINI ISTIYORSAN BURDAN AYARLA (3000 TL ve altindaki miktarlar kt ediliyor)
-        del tum_cek_miktarlari[-1]
-        del all_customer_ids[-1]
-        cp_paste_cust_id()
-    if tum_cek_miktarlari[-1] <= 100: # 400 TL ALTI KONTROLSUZ ONAY
-        cekim_onay()
-    
     for cek in driver_vevo.driver.find_elements_by_xpath(musteri_kodu):
+        if tum_cek_miktarlari[-1] <= 100: # 400 TL ALTI KONTROLSUZ ONAY
+            cp_paste_cust_id()
+            break
+        if tum_cek_miktarlari[-1] >= 2999: # KAC TLYE KADAR KT EDILMESINI ISTIYORSAN BURDAN AYARLA (3000 TL ve altindaki miktarlar kt ediliyor)
+            del tum_cek_miktarlari[-1]
+            del all_customer_ids[-1]
+            cp_paste_cust_id()
+            break
         if cek.text == all_customer_ids[-1]:
             cek.location_once_scrolled_into_view
-            cek.click()
+            while True:
+                try:
+                    cek.click()
+                except (ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException, StaleElementReferenceException):
+                    pass
+                break
             break
     
     while True:
         element = ''
-        try:  
+        try:
+            cekim_sekmesi = driver_vevo.driver.find_element_by_xpath('/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[2]/div[1]/div[6]/ul/li[2]/a')
+            cekim_sekmesi.location_once_scrolled_into_view
+            cekim_sekmesi.click()
+            time.sleep(1)
+            yatirim_sekmesi = driver_vevo.driver.find_element_by_xpath('/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[2]/div[1]/div[6]/ul/li[1]/a')
+            yatirim_sekmesi.click()
+            time.sleep(1)
             element = driver_vevo.driver.find_element_by_xpath('/html/body/div[4]/div/form[1]/fieldset/div/div[3]/div/div[2]/div[1]/div[6]/div/div[1]/div/div/table/tbody/tr[1]/td[2]/label')
         except (ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException, StaleElementReferenceException):
             pass
@@ -223,6 +230,18 @@ def cp_paste_cust_id():
                     i += 1
         if yat_baslangic_tarihi:
             break
+    cp_paste_cust_id()
+
+def cp_paste_cust_id():
+    if len(tum_cek_miktarlari) == 0:
+        get_id_again()
+    print(all_customer_ids, tum_cek_miktarlari)
+    if tum_cek_miktarlari[-1] >= 2999: # KAC TLYE KADAR KT EDILMESINI ISTIYORSAN BURDAN AYARLA (3000 TL ve altindaki miktarlar kt ediliyor)
+        del tum_cek_miktarlari[-1]
+        del all_customer_ids[-1]
+        cp_paste_cust_id()
+    if tum_cek_miktarlari[-1] <= 100: # 400 TL ALTI KONTROLSUZ ONAY
+        cekim_onay()    
 
     driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
     time.sleep(1)
@@ -253,7 +272,6 @@ def get_ready_islemler():
     # yeni_ay = int(ay) - 1
     bt.clear()
     bt.send_keys(yat_baslangic_tarihi[0])
-    del yat_baslangic_tarihi[0]
     # TARIHI 1 AY GERIYE AL - BITIS
 
     # DURUM TIPINI TAMAMLANMIS YAP - BASLANGIC
@@ -324,32 +342,61 @@ def cekim_onay():
     yet_notu.send_keys('.')
     driver_vevo.driver.find_element_by_xpath(evet_bt).click() # GECERLIYE ATMAK ICIN # YI KALDIR.
     time.sleep(1)
-    del all_customer_ids[-1] # LISTEDEKI SON MUSTERININ IDSINI SIL
-    del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+    all_customer_ids.clear() # LISTEDEKI SON MUSTERININ IDSINI SIL
+    tum_cek_miktarlari.clear() # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+    yat_baslangic_tarihi.clear()
     islem_sutunu.clear()
     tarih_sutunu.clear()
     cr_page_number = 2
-    if len(all_customer_ids) == 0:
-        driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
-        time.sleep(1)
-        driver_vevo.driver.find_element_by_xpath(search_bt).click()
-        get_cust_id()
-    else:
-        cp_paste_cust_id()
 
-def cekim_red():
-    del all_customer_ids[-1] # LISTEDEKI SON MUSTERI IDSINI SIL
-    del tum_cek_miktarlari[-1] # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+    driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
+    time.sleep(1)
+    driver_vevo.driver.find_element_by_xpath(search_bt).click()
+    time.sleep(3)
+    get_cust_id()
+
+
+def cekim_red(note):
+    time.sleep(2)
+    driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2]) # Muhasebe Yönetimi
+    for cek in driver_vevo.driver.find_elements_by_xpath(musteri_kodu):
+        if cek.text == all_customer_ids[-1]:
+            cek.location_once_scrolled_into_view
+            cek.click()
+            break
+        # elif cek.text not in all_customer_ids:
+        #     all_customer_ids.clear() # LISTEDEKI SON MUSTERININ IDSINI SIL
+        #     tum_cek_miktarlari.clear() # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+        #     islem_sutunu.clear()
+        #     tarih_sutunu.clear()
+        #     get_cust_id()
+    while True:
+        time.sleep(1)
+        element = ''
+        try:  
+            element = driver_vevo.driver.find_element_by_xpath(gecerli_bt).get_attribute("aria-disabled")
+        except StaleElementReferenceException:  
+            pass
+        if element == 'false':
+            driver_vevo.driver.find_element_by_xpath('/html/body/div[4]/div/form[1]/fieldset/div/div[2]/div[1]/button[5]/span').click()
+            break
+    time.sleep(2)
+    yet_notu = driver_vevo.driver.find_element_by_xpath('/html/body/div[4]/div/form[3]/div/div[2]/table[1]/tbody/tr[8]/td[3]/textarea')
+    yet_notu.send_keys(note)
+    driver_vevo.driver.find_element_by_xpath('/html/body/div[4]/div/form[3]/div/div[2]/table[2]/tbody/tr/td[1]/button/span').click() # GECERLIYE ATMAK ICIN # YI KALDIR.
+    time.sleep(1)
+    all_customer_ids.clear() # LISTEDEKI SON MUSTERI IDSINI SIL
+    tum_cek_miktarlari.clear() # LISTEDEKI SON MUSTERININ CEKIM MIKTARINI SIL
+    yat_baslangic_tarihi.clear()
     islem_sutunu.clear()
     tarih_sutunu.clear()
+    
     cr_page_number = 2
-    if len(all_customer_ids) == 0:
-        driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
-        driver_vevo.driver.find_element_by_xpath(search_bt).click()
-        get_cust_id()
-    else:
-        driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[4]) # Yeni Müşteri Ara Paneli
-        cp_paste_cust_id()
+
+    driver_vevo.driver.switch_to_window(driver_vevo.driver.window_handles[2])
+    driver_vevo.driver.find_element_by_xpath(search_bt).click()
+    time.sleep(3)
+    get_cust_id()
 
 def get_wd_data():
     time.sleep(2)
@@ -473,12 +520,12 @@ def casino_hesapla(deposit_miktari):
             note = f'{all_customer_ids[-1]} - Casino cevrimi onay'
             cekim_onay()
     else:
-        note = f'{all_customer_ids[-1]} - Casino cevrimi red'
+        note = f'{deposit_miktari} TL değerinde casino da oyun oynamanız gerekmektedir ya da en az 1.30 orandan değerinde bahis almanız gerekmektedir'
         a = istatistik()
-        dontpade_yazdir(note)
-        cekim_red()
+        cekim_red(note)
 
 def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
+    cr_page_number = 2
     x = int(miktar_sutunu[-1])
     deposit_miktari = x * 9 / 10
     if islem_sutunu[-1] in tum_yatirim_yontemleri:
@@ -551,14 +598,12 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
                         cekim_onay()
                     break
                 if i == 1:
-                    note = f'{all_customer_ids[-1]} - Cevrim RED. Oynamasi gereken tutar: {deposit_miktari}'
-                    dontpade_yazdir(note)
-                    cekim_red()
+                    note = f'{deposit_miktari} TL değerinde casino da oyun oynamanız gerekmektedir ya da en az 1.30 orandan değerinde bahis almanız gerekmektedir'
+                    cekim_red(note)
                     break
             elif i == 1 and len(islem_sutunu) == 1:
-                note = f'{all_customer_ids[-1]} - Cevrim RED. Oynamasi gereken tutar: {deposit_miktari}'
-                dontpade_yazdir(note)        
-                cekim_red()
+                note = f'{deposit_miktari} TL değerinde casino da oyun oynamanız gerekmektedir ya da en az 1.30 orandan değerinde bahis almanız gerekmektedir'
+                cekim_red(note)
                 break
 
             elif islem_sutunu[i-1] == 'Transfer to Casino':
@@ -591,7 +636,6 @@ def cevrim_hesapla(miktar_sutunu, islem_sutunu, tarih_sutunu):
 
 
     elif islem_sutunu[-1] not in tum_yatirim_yontemleri:
-        global cr_page_number
         total_page_nr = driver_vevo.driver.find_elements_by_xpath(
             '/html/body/div[4]/div/div[5]/div/form[2]/fieldset/div/div/div/div[1]/div[9]/div/div/div/div[1]/div[2]/div/div[3]/span/a')
 
