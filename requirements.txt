@@ -44,7 +44,7 @@ pkginfo==1.5.0.1
 PyAutoGUI==0.9.48
 pycodestyle==2.5.0
 PyGetWindow==0.0.8
-Pygments==2.4.2
+Pygments==2.7.4
 pylint==2.4.4
 PyMsgBox==1.0.7
 pyobjc==6.1
